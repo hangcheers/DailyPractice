@@ -1,9 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
+
 """
 weight outlier makes the deformation of the decision boundary very visible
 """
+
 
 def plot_decision_function(classifier, sample_weight, axis, title):
     xx, yy = np.meshgrid(np.linspace(-4, 5, 500), np.linspace(-4, 5, 500))
@@ -27,8 +29,8 @@ sample_weight_constant = np.ones(len(X))
 # bigger weights to the outliers
 sample_weight_last_ten[15:] * 5
 sample_weight_last_ten[9] *= 15
-clf_weights=svm.SVC()
-clf_weights.fit(X,y,sample_weight_last_ten)
+clf_weights = svm.SVC()
+clf_weights.fit(X, y, sample_weight_last_ten)
 clf_no_weights = svm.SVC()
 clf_no_weights.fit(X, y)
 

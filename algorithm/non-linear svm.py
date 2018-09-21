@@ -67,3 +67,4 @@ plt.scatter(X[:, 0], X[:, 1], c=Y, cmap=plt.cm.Paired, edgecolors='k')
 plt.title('3-class classification''kernel')
 plt.axis('tight')
 plt.show()
+
