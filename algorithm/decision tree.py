@@ -9,6 +9,7 @@ decision tree
 """
 
 
+# results是一个字典，r相当于"键"，results[r]相当于"值"，对y可能的取值出现的个数进行计数
 def uniquecounts(rows):
     results = {}
     for row in rows:
@@ -41,6 +42,8 @@ class decisionnode:
 
 
 # 基尼指数,近似替代分类误差的概率
+# CART算法中，对于分类树，采用基尼指数最小化准则，基尼指数越小，结果越好
+# CART决策树是一个二叉树，递归地二分每个特征
 def ginnimpurity(rows):
     total = len(rows)
     counts = uniquecounts(rows)
@@ -54,6 +57,7 @@ def ginnimpurity(rows):
 
 # 通过切分变量（spliting value) 对数据集拆分
 # R1(j,s)={x|x<s}, R2(j,s)={x|x>=s}
+# 或者通过 =，！=来进行切分
 def divideset(rows, column, value):
     split_function = None
     if isinstance(value, int) or isinstance(value, float):
@@ -70,12 +74,14 @@ def divideset(rows, column, value):
 def buildtree(rows, scoref=entropy):
     if len(rows) == 0: return decisionnode()
     current_score = scoref(rows)
-    # 定义最佳拆分条件,切分变量和切分点
+    # gain代表信息增益，criteria 定义最佳拆分条件,切分点
     best_gain = 0.0
     best_criteria = None
     best_sets = None
     column_count = len(rows[0]) - 1
+    # 选择信息增益最大的特征作为结点特征，
     for col in range(0, column_count):
+        # 在当前列中生成一个由不同值构成的字典
         column_values = {}
         for row in rows:
             column_values[row[col]] = 1  # 初始化
@@ -90,7 +96,7 @@ def buildtree(rows, scoref=entropy):
                 best_criteria = (col, value)
                 best_sets = (set1, set2)
 
-    # 创建子分支
+    # 由该特征创建子分支
     if best_gain > 0:
         trueBranch = buildtree(best_sets[0])
         falseBranch = buildtree(best_sets[1])
@@ -115,7 +121,6 @@ def printtree(tree, indent=''):
 
 
 # 对观测数据进行分类
-
 def classify(observation, tree):
     if tree.results != None:
         return tree.results
@@ -133,6 +138,25 @@ def classify(observation, tree):
             else:
                 branch = tree.fb
         return classify(observation, branch)
+
+
+# 决策树的减枝
+def prune(tree, mingain):
+    if tree.tb.results == None:
+        prune(tree.tb, mingain)
+    if tree.fb.results == None:
+        prune(tree.fb, mingain)
+    if tree.tb.results != None and tree.fb.results != None:
+        # 构造合并后的数据集
+        tb, fb = [], []
+        for v, c in tree.tb.results.items():
+            tb += [[v]] * c
+        for v, c in tree.fb.results.items():
+            fb += [[v]] * c
+        delta = entropy(tb + fb) - ((entropy(tb) + entropy(fb)) / 2)
+        if delta < mingain:
+            tree.tb, tree.fb = None, None
+            tree.results = uniquecounts(tb + fb)
 
 
 # 测试集测试
@@ -158,4 +182,4 @@ ginnimpurity(my_data)
 tree = buildtree(my_data)
 printtree(tree=tree)
 print(printtree)
-print(classify(['(direct)','USA','yes',5],tree))
+print(classify(['(direct)', 'USA', 'yes', 5], tree))
