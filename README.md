@@ -15,7 +15,7 @@
 
 ### 原理
 朴素贝叶斯法对条件概率分布做了条件独立性的假设。
-利用朴素贝叶斯分类时，给定输入x,通过学习到的模型计算后验概率P(Y=Ck|X=x)  
+利用朴素贝叶斯分类时，给定输入x,通过学习到的模型计算后验概率<a href="https://www.codecogs.com/eqnedit.php?latex=$$P(Y=C_k|X=x)&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$P(Y=C_k|X=x)&space;$$" title="$$P(Y=C_k|X=x) $$" /></a>
 后验概率越大，物体属于这一类的概率越大，选择最大的类x作为输出。
 贝叶斯推理（inference）是通过计算数据的后验分布，不断迭代更新先验分布，在document classification和spam filtering中效果很好。
 适合较小的数据集
@@ -45,15 +45,19 @@
 设决策树的任意结点为t,结点t下有若干子结点「即以t为根结点的子树」
 
 剪枝前的损失函数：Ca(Tt)=C(Tt)+a|Tt|  
-剪枝后（子结点吞并了它的子树,原先的子结点已经变成了当前的叶结点）损失函数：Ca(t)=C(t)+a  
+剪枝后（子结点吞并了它的子树,原先的子结点已经变成了当前的叶结点）损失函数：<a href="https://www.codecogs.com/eqnedit.php?latex=$$C_{\alpha&space;}(t)=C(t)&plus;\alpha&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$C_{\alpha&space;}(t)=C(t)&plus;\alpha&space;$$" title="$$C_{\alpha }(t)=C(t)+\alpha $$" /></a>
 
 ## adaboost
 ### 集成学习：
 通过训练若干个体学习器，通过一定的结合策略形成一个强学习器。boost系列属于个体学习器之间存在强依赖关系【串行】。  
 假设现在是二分类问题，学习器的精确率大于1/2时才有意义。（因为随机判断的精确率都已经是1/2了）  
-G(x)=sign[f(x)]=sign[a1G1(x)+a2G2(x)+...+anGn(x)] 
-其中ai表示个体学习器的重要性；Gi(x)表示个体学习器  
-boost意为提升，一个逐步优化集成学习器的过程。adaboost通过指数型损失函数exp(x)调整权重，分类正确的降低权重，分类错误的增加权重，「希望把之前分类错误的数据在下一个个体学习器中分类正确」降低个体学习器的分类误差，得到最终的集成学习器。
+<a href="https://www.codecogs.com/eqnedit.php?latex=$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)&plus;\alpha_{2}G2(x)&plus;...&plus;\alpha_{n}Gn(x)]&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)&plus;\alpha_{2}G2(x)&plus;...&plus;\alpha_{n}Gn(x)]&space;$$" title="$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)+\alpha_{2}G2(x)+...+\alpha_{n}Gn(x)] $$" /></a>其中ai表示个体学习器的重要性；Gi(x)表示个体学习器  
+boost意为提升，一个逐步优化集成学习器的过程。adaboost通过指数型损失函数exp(x)调整权重，分类正确的降低权重，分类错误的增加权重，「希望把之前分类错误的数据在下一个个体学习器中分类正确」降低个体学习器的分类误差，得到最终的集成学习器。  
+
+## 提升树  
+### GBDT  
+GBDT的弱学习器限定了只能使用CART回归树模型，使用前向分布算法。前一轮迭代得到的学习器是<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_{t-1}(x)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_{t-1}(x)$$" title="$$f_{t-1}(x)$$" /></a>，损失函数是<a href="https://www.codecogs.com/eqnedit.php?latex=$$L(y,f_{t-1}(x))$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$L(y,f_{t-1}(x))$$" title="$$L(y,f_{t-1}(x))$$" /></a>。
+
 
 
 
