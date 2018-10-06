@@ -26,7 +26,7 @@
 ### 步骤
 1.将原始数据转换为矩阵
 2.对每一个属性字段进行均值化处理
-3.求协方差 C= V*L*V.T (V是矩阵，其每一个列向量都是一个特征值；L是对角矩阵，按特征值的大小降序排序)
+3.求协方差<a href="https://www.codecogs.com/eqnedit.php?latex=$$&space;C=&space;V*L*V^T&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$&space;C=&space;V*L*V^T&space;$$" title="$$ C= V*L*V^T $$" /></a> (V是矩阵，其每一个列向量都是一个特征值；L是对角矩阵，按特征值的大小降序排序)
 4.主元（principal axes）1是最大奇异值对应的奇异向量，主成分（principal components)1是数据在主元上的投影。
 
 ## decision tree
@@ -56,10 +56,12 @@ boost意为提升，一个逐步优化集成学习器的过程。adaboost通过�
 
 ## 提升树  
 ### GBDT  
-GBDT的弱学习器限定了只能使用CART回归树模型，使用前向分布算法。前一轮迭代得到的学习器是<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_{t-1}(x)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_{t-1}(x)$$" title="$$f_{t-1}(x)$$" /></a>，损失函数是<a href="https://www.codecogs.com/eqnedit.php?latex=$$L(y,f_{t-1}(x))$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$L(y,f_{t-1}(x))$$" title="$$L(y,f_{t-1}(x))$$" /></a>。
+GBDT的弱学习器限定了只能使用CART回归树模型，使用前向分布算法。前一轮迭代得到的学习器是<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_{t-1}(x)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_{t-1}(x)$$" title="$$f_{t-1}(x)$$" /></a>，损失函数是<a href="https://www.codecogs.com/eqnedit.php?latex=$$L(y,f_{t-1}(x))$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$L(y,f_{t-1}(x))$$" title="$$L(y,f_{t-1}(x))$$" /></a>。  第t轮的第i个样本的损失函数的负梯度表示为<a href="https://www.codecogs.com/eqnedit.php?latex=$&space;T_{ti}=-[{\cfrac{\partial&space;L(y_i,f(x_i))}{\partial&space;f(x_i)}}]&space;_{f(x)=f_{t-1}(x)}$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$&space;T_{ti}=-[{\cfrac{\partial&space;L(y_i,f(x_i))}{\partial&space;f(x_i)}}]&space;_{f(x)=f_{t-1}(x)}$" title="$ T_{ti}=-[{\cfrac{\partial L(y_i,f(x_i))}{\partial f(x_i)}}] _{f(x)=f_{t-1}(x)}$" /></a>  用损失函数的负梯度来拟合本轮损失的近似值
 
+用<a href="https://www.codecogs.com/eqnedit.php?latex=$$(x_i,r_{ti})(i=1,2,...,m)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$(x_i,r_{ti})(i=1,2,...,m)$$" title="$$(x_i,r_{ti})(i=1,2,...,m)$$" /></a>
+残差拟合得到CART回归树，得到第t棵回归树，其对应的叶节点的区域为<a href="https://www.codecogs.com/eqnedit.php?latex=$$R_{tj}(j=1,2,...,m)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$R_{tj}(j=1,2,...,m)$$" title="$$R_{tj}(j=1,2,...,m)$$" /></a>针对每一个叶节点的样本，使得损失函数最小，即拟合叶子节点的输出值
 
-
-
+### 步骤  
+1.初始化弱学习器 2.迭代次数 t=1,2,...T时，针对样本i=1,2....,m 计算负梯度值，利用残差拟合CART回归树得到第t棵回归树 3.对叶子区域，计算拟合值，更新强学习器，得到强学习器f(x)表达树
 
 Reference:[scikit-learn](http://scikit-learn.org/stable/)、[scipy](https://docs.scipy.org/)、[matplotlib](https://matplotlib.org)、李航《统计学习方法》
