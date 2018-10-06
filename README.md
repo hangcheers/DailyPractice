@@ -62,6 +62,13 @@ GBDT的弱学习器限定了只能使用CART回归树模型，使用前向分布
 残差拟合得到CART回归树，得到第t棵回归树，其对应的叶节点的区域为<a href="https://www.codecogs.com/eqnedit.php?latex=$$R_{tj}(j=1,2,...,m)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$R_{tj}(j=1,2,...,m)$$" title="$$R_{tj}(j=1,2,...,m)$$" /></a>针对每一个叶节点的样本，使得损失函数最小，即拟合叶子节点的输出值
 
 ### 步骤  
-1.初始化弱学习器 2.迭代次数 t=1,2,...T时，针对样本i=1,2....,m 计算负梯度值，利用残差拟合CART回归树得到第t棵回归树 3.对叶子区域，计算拟合值，更新强学习器，得到强学习器f(x)表达树
+1.初始化弱学习器 2.迭代次数 t=1,2,...T时，针对样本i=1,2....,m 计算负梯度值，利用残差拟合CART回归树得到第t棵回归树 3.对叶子区域，计算拟合值，更新强学习器，得到强学习器f(x)表达树  
+
+### 正则化
+通常有三种做法来进行GBDT正则化。
+
+1.加入「正则化项」<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_k(x)=f_{k-1}(x)&plus;\nu&space;h_k(x)&space;(0<&space;\nu&space;\leqslant&space;1)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_k(x)=f_{k-1}(x)&plus;\nu&space;h_k(x)&space;(0<&space;\nu&space;\leqslant&space;1)$$" title="$$f_k(x)=f_{k-1}(x)+\nu h_k(x) (0< \nu \leqslant 1)$$" /></a>用步长和最大迭代次数来决定算法的拟合效果。
+2.通过「子采样」，选择一部分样本去做决策树拟合。
+3.对弱学习器即CART回归树进行正则化剪枝。
 
 Reference:[scikit-learn](http://scikit-learn.org/stable/)、[scipy](https://docs.scipy.org/)、[matplotlib](https://matplotlib.org)、李航《统计学习方法》
