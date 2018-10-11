@@ -10,12 +10,9 @@
 
 ## naive bayes 
 
-### 极大似然估计  
-极大似然估计属于一个参数估计问题，相当于把实际问题的求解简化为参数估计的一种方式。只有当参数选定时，才会有一个描述给定现象的模型实例。MLE就是一组使得观测值概率最大的参数估计的问题。在PCA中，对先验概率进行极大似然估计。
-
 ### 原理
 朴素贝叶斯法对条件概率分布做了条件独立性的假设。
-利用朴素贝叶斯分类时，给定输入x,通过学习到的模型计算后验概率P(Y=Ck|X=x)  
+利用朴素贝叶斯分类时，给定输入x,通过学习到的模型计算后验概率<a href="https://www.codecogs.com/eqnedit.php?latex=$$P(Y=C_k|X=x)&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$P(Y=C_k|X=x)&space;$$" title="$$P(Y=C_k|X=x) $$" /></a>
 后验概率越大，物体属于这一类的概率越大，选择最大的类x作为输出。
 贝叶斯推理（inference）是通过计算数据的后验分布，不断迭代更新先验分布，在document classification和spam filtering中效果很好。
 适合较小的数据集
@@ -26,7 +23,7 @@
 ### 步骤
 1.将原始数据转换为矩阵
 2.对每一个属性字段进行均值化处理
-3.求协方差 C= V*L*V.T (V是矩阵，其每一个列向量都是一个特征值；L是对角矩阵，按特征值的大小降序排序)
+3.求协方差<a href="https://www.codecogs.com/eqnedit.php?latex=$$&space;C=&space;V*L*V^T&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$&space;C=&space;V*L*V^T&space;$$" title="$$ C= V*L*V^T $$" /></a> (V是矩阵，其每一个列向量都是一个特征值；L是对角矩阵，按特征值的大小降序排序)
 4.主元（principal axes）1是最大奇异值对应的奇异向量，主成分（principal components)1是数据在主元上的投影。
 
 ## decision tree
@@ -45,17 +42,30 @@
 设决策树的任意结点为t,结点t下有若干子结点「即以t为根结点的子树」
 
 剪枝前的损失函数：Ca(Tt)=C(Tt)+a|Tt|  
-剪枝后（子结点吞并了它的子树,原先的子结点已经变成了当前的叶结点）损失函数：Ca(t)=C(t)+a  
+剪枝后（子结点吞并了它的子树,原先的子结点已经变成了当前的叶结点）损失函数：<a href="https://www.codecogs.com/eqnedit.php?latex=$$C_{\alpha&space;}(t)=C(t)&plus;\alpha&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$C_{\alpha&space;}(t)=C(t)&plus;\alpha&space;$$" title="$$C_{\alpha }(t)=C(t)+\alpha $$" /></a>
 
 ## adaboost
 ### 集成学习：
 通过训练若干个体学习器，通过一定的结合策略形成一个强学习器。boost系列属于个体学习器之间存在强依赖关系【串行】。  
 假设现在是二分类问题，学习器的精确率大于1/2时才有意义。（因为随机判断的精确率都已经是1/2了）  
-G(x)=sign[f(x)]=sign[a1G1(x)+a2G2(x)+...+anGn(x)] 
-其中ai表示个体学习器的重要性；Gi(x)表示个体学习器  
-boost意为提升，一个逐步优化集成学习器的过程。adaboost通过指数型损失函数exp(x)调整权重，分类正确的降低权重，分类错误的增加权重，「希望把之前分类错误的数据在下一个个体学习器中分类正确」降低个体学习器的分类误差，得到最终的集成学习器。
+<a href="https://www.codecogs.com/eqnedit.php?latex=$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)&plus;\alpha_{2}G2(x)&plus;...&plus;\alpha_{n}Gn(x)]&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)&plus;\alpha_{2}G2(x)&plus;...&plus;\alpha_{n}Gn(x)]&space;$$" title="$$G(x)=sign[f(x)]=sign[\alpha_{1}G1(x)+\alpha_{2}G2(x)+...+\alpha_{n}Gn(x)] $$" /></a>其中ai表示个体学习器的重要性；Gi(x)表示个体学习器  
+boost意为提升，一个逐步优化集成学习器的过程。adaboost通过指数型损失函数exp(x)调整权重，分类正确的降低权重，分类错误的增加权重，「希望把之前分类错误的数据在下一个个体学习器中分类正确」降低个体学习器的分类误差，得到最终的集成学习器。  
 
+## 提升树  
+### GBDT  
+GBDT的弱学习器限定了只能使用CART回归树模型，使用前向分布算法。前一轮迭代得到的学习器是<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_{t-1}(x)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_{t-1}(x)$$" title="$$f_{t-1}(x)$$" /></a>，损失函数是<a href="https://www.codecogs.com/eqnedit.php?latex=$$L(y,f_{t-1}(x))$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$L(y,f_{t-1}(x))$$" title="$$L(y,f_{t-1}(x))$$" /></a>。  第t轮的第i个样本的损失函数的负梯度表示为<a href="https://www.codecogs.com/eqnedit.php?latex=$&space;T_{ti}=-[{\cfrac{\partial&space;L(y_i,f(x_i))}{\partial&space;f(x_i)}}]&space;_{f(x)=f_{t-1}(x)}$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$&space;T_{ti}=-[{\cfrac{\partial&space;L(y_i,f(x_i))}{\partial&space;f(x_i)}}]&space;_{f(x)=f_{t-1}(x)}$" title="$ T_{ti}=-[{\cfrac{\partial L(y_i,f(x_i))}{\partial f(x_i)}}] _{f(x)=f_{t-1}(x)}$" /></a>  用损失函数的负梯度来拟合本轮损失的近似值
 
+用<a href="https://www.codecogs.com/eqnedit.php?latex=$$(x_i,r_{ti})(i=1,2,...,m)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$(x_i,r_{ti})(i=1,2,...,m)$$" title="$$(x_i,r_{ti})(i=1,2,...,m)$$" /></a>
+残差拟合得到CART回归树，得到第t棵回归树，其对应的叶节点的区域为<a href="https://www.codecogs.com/eqnedit.php?latex=$$R_{tj}(j=1,2,...,m)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$R_{tj}(j=1,2,...,m)$$" title="$$R_{tj}(j=1,2,...,m)$$" /></a>针对每一个叶节点的样本，使得损失函数最小，即拟合叶子节点的输出值
 
+### 步骤  
+1.初始化弱学习器 2.迭代次数 t=1,2,...T时，针对样本i=1,2....,m 计算负梯度值，利用残差拟合CART回归树得到第t棵回归树 3.对叶子区域，计算拟合值，更新强学习器，得到强学习器f(x)表达树  
+
+### 正则化
+通常有三种做法来进行GBDT正则化。
+
+1.加入「正则化项」<a href="https://www.codecogs.com/eqnedit.php?latex=$$f_k(x)=f_{k-1}(x)&plus;\nu&space;h_k(x)&space;(0<&space;\nu&space;\leqslant&space;1)$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$f_k(x)=f_{k-1}(x)&plus;\nu&space;h_k(x)&space;(0<&space;\nu&space;\leqslant&space;1)$$" title="$$f_k(x)=f_{k-1}(x)+\nu h_k(x) (0< \nu \leqslant 1)$$" /></a>用步长和最大迭代次数来决定算法的拟合效果。
+2.通过「子采样」，选择一部分样本去做决策树拟合。
+3.对弱学习器即CART回归树进行正则化剪枝。
 
 Reference:[scikit-learn](http://scikit-learn.org/stable/)、[scipy](https://docs.scipy.org/)、[matplotlib](https://matplotlib.org)、李航《统计学习方法》
