@@ -10,9 +10,6 @@
 
 ## naive bayes 
 
-### 极大似然估计  
-极大似然估计属于一个参数估计问题，相当于把实际问题的求解简化为参数估计的一种方式。只有当参数选定时，才会有一个描述给定现象的模型实例。MLE就是一组使得观测值概率最大的参数估计的问题。在PCA中，对先验概率进行极大似然估计。
-
 ### 原理
 朴素贝叶斯法对条件概率分布做了条件独立性的假设。
 利用朴素贝叶斯分类时，给定输入x,通过学习到的模型计算后验概率<a href="https://www.codecogs.com/eqnedit.php?latex=$$P(Y=C_k|X=x)&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$P(Y=C_k|X=x)&space;$$" title="$$P(Y=C_k|X=x) $$" /></a>
