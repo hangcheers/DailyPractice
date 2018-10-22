@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import stats
 
+
 observations = np.array([[1, 0, 0, 0, 1, 1, 0, 1, 0, 1],
                          [1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
                          [1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
@@ -28,7 +29,7 @@ def em_single(priors, observations):
         num_tails = len_observation - num_heads
         # binom.pmf 是二项分布  binom.pmf(k) = choose(n, k) * p**k * (1-p)**(n-k) p = theta_A
         contribution_A = stats.binom.pmf(num_heads, len_observation, theta_A)
-        contribution_B = stats.binom.pmf(num_heads, len_observation, theta_B)
+        contribution_B = stats.binom.pmf(num_tails, len_observation, theta_B)
         weight_A = contribution_A / (contribution_A + contribution_B)
         weight_B = contribution_B / (contribution_A + contribution_B)
         # 统计在当前参数下A、B硬币的正反面次数
