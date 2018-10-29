@@ -64,3 +64,11 @@ print("Edges of Graph")
 print(G.get_edges())
 print("Adjacency Matrix of Graph")
 print(G.get_matrix())
+
+输出结果为：
+Vertices of Graph
+['a', 'b', 'c', 'd', 'e']
+Edges of Graph
+[('a', 'c', 20), ('a', 'e', 10), ('b', 'e', 40), ('c', 'b', 30), ('e', 'd', 50)]
+Adjacency Matrix of Graph
+[[-1, -1, 20, -1, 10], [-1, -1, -1, -1, 40], [-1, 30, -1, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, 50, -1]]
