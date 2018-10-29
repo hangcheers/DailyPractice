@@ -18,7 +18,7 @@ expect these “new” examples to help steer the classifier away from its curre
 熵entropy -> KL散度K-L divergence ->交叉熵 cross entropy   
 
 熵反映了一个事件所包含的信息量，p(x)越小，熵越大，
-即越不可能发生的事情包含的信息量越大  
+即越不可能发生的事情包含的信息量越大。此外，熵还可以从不确定性度量理解，分布越集中，不确定性越小，熵越小。
 
 KL散度反映了两个分布之间的不同D_KL(A| |B)
 KL散度由A自己的熵与B在A上的期望所决定.
