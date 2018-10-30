@@ -25,9 +25,11 @@ class Graph:
         if parent[i] == -1:
             return i
         if parent[i] != -1:
+            #当没有找到时，根据其父节点的引用节点向根一直追溯下去
             return self.find_parent(parent, parent[i])
 
     # a utility function to do union of two subsets
+    # 即将一棵树的根连接到另一棵树上去
     def union(self, parent, x, y):
         x_set = self.find_parent(parent, x)
         y_set = self.find_parent(parent, y)
