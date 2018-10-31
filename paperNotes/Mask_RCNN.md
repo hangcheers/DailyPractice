@@ -10,7 +10,9 @@ Faster-RCNN在object detection中相当于**baseline system**，主要包括了�
 在Faster-RCNN中使用RPN来进行候选框的确定，即「Region proposal Network找出物体可能存在的所有位置」，在这一个过程中找全，没有漏检很重要，不然后面的分类也没法分了。即Recall的值要高，「Recall=正确识别出来的object/数据库里含有的object，当recall=100%时，表示没有漏检」。RPN网络是一种全连接网络（FCN在下文有提到哈哈）
 
 RPN预测了object bounds and objectness scores at each position，这给Fast-RCNN起到**类似指哪打哪**的作用了。此外，这里也是文章的另一个**创新点**，通过「sharing the convolutional features」实现了RPN和Fast-RCNN融合到一个网络中去了,因此也在一定程度上节省了计算开销。
-> using the recently popular terminology of neural networks with “attention” mechanisms, the RPN component tells the unified network where to look
+> using the recently popular terminology of neural networks with “attention” mechanisms, the RPN component tells the unified network where to look  
+![Faster-RCNN](https://lilianweng.github.io/lil-log/assets/images/faster-RCNN.png)  
+
 下面我们再来理解一下Faster-RCNN中的ROI pooling (Region of Interest pooling)
 主要包括三步：
 1. 把 region proposal 分为n等分，n=the dimension of the output  2. 找到每个section最大的值  3.把每个最大的提取出来作为output buffer。其主要的优点在于：再一次用了CNN产生的feature map，并且加速了训练/测试的过程。
@@ -27,10 +29,11 @@ FPN利用了CNN层级特征的金字塔形式，同时生成在所有尺度上�
 2. top-down是向上采样（upsampling)  
 3. lateral connection帮助融合不同层的语义信息（即融合了bottom-up和top-down的语义信息），达到单尺度单张input，构建multiple scale的特征金字塔。
  此外，使用了1x1的卷积核来起到降低维度的作用。
+ ![FPN](https://www.pytorchtutorial.com/wp-content/uploads/2018/08/1174793-20170612173455400-159085110.png)
 
 ### Fully Convolutional Networks
-问题：  
-作者在「Fully Convolutional Networks for semantic segmentation」一开始说的：
+[FCN论文地址]（https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf） 
+「Fully Convolutional Networks for semantic segmentation」一开始说的：
 > combines semantic information from a 「deep , coarse」 layer with appearance information from a 「shallow, fine」 layers  
 
 那为什么deep和coarse连在一起，shallow和fine来接在一起，不是越deep的层，越有表达力么？  
@@ -50,4 +53,8 @@ FCN可以接受任意尺寸的输入图像，采用反卷积层对最后一个�
 在the mask branch中，FCN被用在每个ROI中进行pixel-to-pixel的分割，这也是mask-RCNN超越了Faster-RCNN的地方。
 作者在文章里是这么说的：
 > Our method, called Mask-RCNN，extends Faster-RCNN by adding a branch for predicting segmentation masks on each Region of Interest,in parallel with the existing branch for classification and bounding box regression.
+
+### Mask-RCNN
+[Mask-RCNN论文地址]（https://arxiv.org/abs/1703.06870）
+Mask-RCNN实现的任务要更「难」，因为不再是object detection 而是要达到instance segmentation，细化到区分类别中的不同实例。通俗点说，像素分类的话可以用不同的颜色来区别不同的实例，但是实例分割的时候即使是同一种类的物体，比如都是猫猫，也要区别出橘猫和加菲猫。
 
