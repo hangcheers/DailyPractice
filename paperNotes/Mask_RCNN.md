@@ -32,7 +32,8 @@ FPN利用了CNN层级特征的金字塔形式，同时生成在所有尺度上�
  ![FPN](https://www.pytorchtutorial.com/wp-content/uploads/2018/08/1174793-20170612173455400-159085110.png)
 
 ### Fully Convolutional Networks
-[FCN论文地址]（https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf） 
+[FCN论文地址](https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf）   
+
 「Fully Convolutional Networks for semantic segmentation」一开始说的：
 > combines semantic information from a 「deep , coarse」 layer with appearance information from a 「shallow, fine」 layers  
 
@@ -55,6 +56,7 @@ FCN可以接受任意尺寸的输入图像，采用反卷积层对最后一个�
 > Our method, called Mask-RCNN，extends Faster-RCNN by adding a branch for predicting segmentation masks on each Region of Interest,in parallel with the existing branch for classification and bounding box regression.
 
 ### Mask-RCNN
-[Mask-RCNN论文地址]（https://arxiv.org/abs/1703.06870）
+[Mask-RCNN论文地址](https://arxiv.org/abs/1703.06870）.   
+
 Mask-RCNN实现的任务要更「难」，因为不再是object detection 而是要达到instance segmentation，细化到区分类别中的不同实例。通俗点说，像素分类的话可以用不同的颜色来区别不同的实例，但是实例分割的时候即使是同一种类的物体，比如都是猫猫，也要区别出橘猫和加菲猫。
 
