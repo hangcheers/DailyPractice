@@ -69,5 +69,18 @@ Mask-RCNN实现的任务要更「难」，因为不再是object detection 而是
 在阅读Mask-RCNN的时候，遇到一个问题「如何来理解**pixel-to-pixel alignment** 」
 > we propose a simple, quantiazation-free layer, called *ROIAlign*， that preserves exact spatial locations.   
 
-相比faster-RCNN的ROI Pooling, Mask-RCNN 用的方法是ROIAlign
+faster-RCNN的ROI Pooling,ROI Pooling 存在两次量化（quantize）过程：第一次是将候选框的边界（通常是浮点数）量化成了整数点坐标，第二次是将量化后的边界区域平均分割成kxk个单元bin时，对每一个单元进行了量化。也可以理解为「粗暴的四舍五入」，使用了邻近插值法，从而选择离目标最近的点。但是这么做会带来一定的偏差，从而影响到分割的精确。也是文章中提到的misalignment。「放大后的图有马赛克，而缩小的图有失真」为了克服这一弊端，作者就取消了量化的过程了，使用双线性插值的方法。Mask-RCNN 用的方法是ROIAlign。
+> we use bilinear interpolation to compute the exact values of the input features at four regularly sampled locations in each ROI bin, and aggregate the result.    
 
+参考[wiki](https://zh.wikipedia.org/wiki/双线性插值)双线性插值指的是对x，y方向各进行一次插值方法。在原图src(source)和目标图dst(destination)上进行图像的缩放。  充分利用src中四个真实的像素值来共同决定目标图中的一个像素值，缩放后的图像质量更高。
+![bl](https://pic3.zhimg.com/v2-29679a796b2ae80f79e458c3f7c19b7f_r.jpg)  
+假设src中四个点的坐标分别是（0，0）（0，1）（1，0）（1，1），公式如下所示：  
+<a href="https://www.codecogs.com/eqnedit.php?latex=f(x,y)=f(0,0)(1-x)(1-y)&plus;f(1,0)x(1-y)&plus;f(0,1)(1-x)y&plus;f(1,1)xy" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(x,y)=f(0,0)(1-x)(1-y)&plus;f(1,0)x(1-y)&plus;f(0,1)(1-x)y&plus;f(1,1)xy" title="f(x,y)=f(0,0)(1-x)(1-y)+f(1,0)x(1-y)+f(0,1)(1-x)y+f(1,1)xy" /></a>  
+
+ROIAlign的做法带来的好处是：
+>1.it improves mask accuracy by relative 10% to 50%, showing bigger gains under stricter localization metrics. 2.we found it essential to decouple mask and class prediction: we predict the binary mask for each class independently.  
+
+下图是作者在ICCV 2017演讲时ppt图片，在这里引用一下，以帮助更好的理解ROIAlign的概念。
+
+![hkm](http://1.file.leanote.top/5a168ad8ab644140060025d3/ROIPool.png?e=1541042505&token=ym9ZIrtxjozPN4G9he3-FHPOPxAe-OQmxzol5EOk:LGKiBJIez0V_4-DK-SazAR3ZJCQ)  
+![hh](http://1.file.leanote.top/5a168b96ab6441421e0026bd/图3.png?e=1541043786&token=ym9ZIrtxjozPN4G9he3-FHPOPxAe-OQmxzol5EOk:9-gn1zZtdsOzaGZ4ZAOavcjU2tw)
