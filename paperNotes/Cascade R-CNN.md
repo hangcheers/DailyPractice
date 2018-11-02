@@ -1,19 +1,37 @@
-## Bounding box regression
+## RCNN
+RCNN 是开创性的将Classification和Object detection问题连接起来的文章。发现以前很多概念没弄太清楚，都列在下面，加以巩固。  
+
+**Bounding box regression**  
+
 因为即使classifier识别出了物体所属的class，但是由于定位不准，导致生成框与标定框的IOU低于设定的阈值（比如0.5），还是无法正确的检测出物体，所以微调很有必要。
-[RCNN](https://arxiv.org/abs/1311.2524)中的Appendix C里面详细的介绍了Bounding box是如何通过「回归」来提高localization的准确度。
-> we demonstrate that a simple bounding-box regression method significantly reduces mislocalizations, whihc are the dominant 
-error modes.   
+[RCNN](https://arxiv.org/abs/1311.2524)中的Appendix C里面详细的介绍了Proposal是如何通过「回归」来逼近Ground Truth 从而提高localization的准确度。
+> These proposals define the set of *candidate detection* available to our detector..... we demonstrate that a simple bounding-box regression method significantly reduces mislocalizations, whihc are the dominant 
+error modes.  
 
-首先我们面对回归问题，我们要知道这个问题是线性的。
-当生成框Proposal box与标定框Ground Truth的距离比较近的时候，我们才能把其当作线性问题来解决。反之当PG距离比较远的时候，这个方法并不能work。
-其次训练过程中的输入变量又是什么，期待得到一个什么样的结果。
-> the primary difference between the two approaches is that here we regress from features computed by the CNN.   
+首先我们面对回归问题，我们要知道这个问题是线性的。当生成框Proposal box与标定框Ground Truth的距离比较近的时候，我们才能把其当作线性问题来解决。反之当PG距离比较远的时候，这个方法并不能work。
+> we train a linear regression model to predict a new detection window given the pool5 features for a selective search region
+proposal.   
 
-根据这一句话我们可以知道是对CNN的特征向量进行回归处理。
+线性回归是对自变量和因变量之间关系进行建模的一种回归分析，当其目标是预测结果尽可能的去拟合y，也就是需要拟合出一个预测模型，对于新增的X值，可以用这个模型来预测一个y值,在这种情况下通常用最常见的Least square作为loss function。在本文中，作者也是选择了构建一个线性回归模型来预测新的bounding box。
+其次训练过程中的输入变量又是什么？这个也是**创新**之处，从*CNN最后一个pooling层即Pool5*的获取的特征来训练线性回归模型来预测detection window
+> Our goal is to learn a **transformation** that maps a proposed box P to a ground-truth box G.
+
 按Appendix C的说法：
- 由Proposal box P 和 Ground-truth box G 组成 training pairs  
- <a href="https://www.codecogs.com/eqnedit.php?latex={P^i,G^i}&space;(i=1,...,N)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{P^i,G^i}&space;(i=1,...,N)" title="{P^i,G^i} (i=1,...,N)" /></a>   
+ 由Proposal box P 和 Ground-truth box G 组成 training pairs ，
+ <a href="https://www.codecogs.com/eqnedit.php?latex={P^i,G^i}&space;(i=1,...,N)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{P^i,G^i}&space;(i=1,...,N)" title="{P^i,G^i} (i=1,...,N)" /></a>   在线性回归模型中分别相当于X和y
  
- 其中P和G可以通过四个位置坐标来表示，但是我们需要注意的是这时的坐标是图片像素级别「pixel」的坐标。
+ 其中P和G可以通过四个位置坐标来表示，其中x,y是bounding box的中心点坐标，w,h是bounding box的宽和高。但是我们需要注意的是这时的坐标是图片像素级别「pixel」的坐标。
  <a href="https://www.codecogs.com/eqnedit.php?latex=P^i=(P^i_x,P^i_y,P^i_w,P^i_h),&space;G=(G_x,G_y,G_w,G_h)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P^i=(P^i_x,P^i_y,P^i_w,P^i_h),&space;G=(G_x,G_y,G_w,G_h)" title="P^i=(P^i_x,P^i_y,P^i_w,P^i_h), G=(G_x,G_y,G_w,G_h)" /></a>
  
+ 从P到G的映射需要两步骤：1.平移 2.尺度缩放。👇是作者所给出的公式，我们对照公式加以解释。  
+ <a href="https://www.codecogs.com/eqnedit.php?latex=\widehat{G_x}=P_wd_x(P)&plus;P_x" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widehat{G_x}=P_wd_x(P)&plus;P_x" title="\widehat{G_x}=P_wd_x(P)+P_x" /></a>  其中的<a href="https://www.codecogs.com/eqnedit.php?latex=P_wd_x(P)=\Delta&space;x" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P_wd_x(P)=\Delta&space;x" title="P_wd_x(P)=\Delta x" /></a>  可以理解为x方向上的移动，同理也可以得到y方向的移动。 
+ <a href="https://www.codecogs.com/eqnedit.php?latex=\widehat{G_w}=P_w(exp(d_w(P)))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widehat{G_w}=P_w(exp(d_w(P)))" title="\widehat{G_w}=P_w(exp(d_w(P)))" /></a> 可以理解为宽度方向上的缩放，同理也可以得到高度方向上的缩放。因为缩放因子永远是正数，所以这里用的是指数形式。
+ 
+我们注意到上面都出现了d_x(P) 这个也就是线性回归模型所派上用场的地方了，这四个变换是我们需要通过模型来学习的。  
+<a href="https://www.codecogs.com/eqnedit.php?latex=d_*(P)=w_*^T\Phi&space;_5(P)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d_*(P)=w_*^T\Phi&space;_5(P)" title="d_*(P)=w_*^T\Phi _5(P)" /></a>   
+其中<a href="https://www.codecogs.com/eqnedit.php?latex=\Phi&space;_5(P)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Phi&space;_5(P)" title="\Phi _5(P)" /></a>是输入Proposal的特征向量，<a href="https://www.codecogs.com/eqnedit.php?latex=w_*" target="_blank"><img src="https://latex.codecogs.com/gif.latex?w_*" title="w_*" /></a>表示的是需要学习的参数。*其中每一个变换都对应一个目标函数*，最终得到的<a href="https://www.codecogs.com/eqnedit.php?latex=d_*(P)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d_*(P)" title="d_*(P)" /></a>是我们得到的预测值
+
+但是真正的「平移量」*t_x,t_y*和「缩放量」*t_w,t_h*是需要从P和G上求出来的，从<a href="https://www.codecogs.com/eqnedit.php?latex=d_x(P),d_y(P),d_w(P),d_h(P)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d_x(P),d_y(P),d_w(P),d_h(P)" title="d_x(P),d_y(P),d_w(P),d_h(P)" /></a>得到的是预测<a href="https://www.codecogs.com/eqnedit.php?latex=\widehat{G}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widehat{G}" title="\widehat{G}" /></a>
+在这里我们需要通过Loss function来使得预测值（即预测的平移量+缩放量）和真实值（即真实的平移量+缩放量）的差距缩小，文章是通过最小二乘法进行目标函数优化。最终，bbox regression的好处就是提高了mAP 3%~5%
+
+![cv](https://img-blog.csdn.net/20160816132136353)
