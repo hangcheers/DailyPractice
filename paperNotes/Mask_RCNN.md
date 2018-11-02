@@ -19,8 +19,8 @@ RPN预测了object bounds and objectness scores at each position，这给Fast-RC
 ### Feature Pyramid Network
 [FPN论文地址](https://arxiv.org/abs/1612.03144)
 
-问题：  
-ROI映射到某个feature map是将底层的坐标直接除以stride，显然对于小目标（size比较小）物体来说，到后面的卷积池化时，实际的语义信息就丢失了很多了。FPN解决的是多尺度检测的问题。 
+背景：  
+ROI映射到某个feature map是将底层的坐标直接除以stride，显然对于小目标（size比较小）物体来说，到后面的卷积池化时，实际的语义信息就丢失了很多了。在CNN中，我们需要考虑不同种类的invariance来做识别，scale invariance很难被CNN考虑到。一般通常的做法有两种Image Pyramid和Feature Pyramid。其中Feature Pyramid的代表有SPPNet和FPN。 
 
 结构：  
 FPN利用了CNN层级特征的金字塔形式，同时生成在所有尺度上具有强语义信息的特征金字塔。FPN设计的金字塔结构包括了bottom-up & top-down & lateral connections(横向连接)三种结构。  
