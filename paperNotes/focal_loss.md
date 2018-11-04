@@ -11,7 +11,10 @@
 (E.x people detected where there aren’t actually people)
 所以hard negative就是把falsely detected path重新作为negative examples，
 并add the negative to the training set. 然后retrain the classifier, 其目的是
-expect these “new” examples to help steer the classifier away from its current mistakes.
+expect these “new” examples to help steer the classifier away from its current mistakes.  
+
+*R-CNN中是这么使用 hard negative mining method:*  
+> we adopt the standard hard negative mining method. Hard negative mining converges quickly and in practice mAP stops increasing after only a single pass over all images.
 
 
 ### cross entropy
