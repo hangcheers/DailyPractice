@@ -1,5 +1,7 @@
 ## RCNN
 RCNN 是开创性的将Classification和Object detection问题连接起来的文章。发现以前很多概念没弄太清楚，都列在下面，加以巩固。  
+RCNN中的R表示的是Region，RCNN的全名应该叫做Regions with CNN features. 
+
 
 **Bounding box regression**  
 
@@ -33,5 +35,22 @@ proposal.
 
 但是真正的「平移量」*t_x,t_y*和「缩放量」*t_w,t_h*是需要从P和G上求出来的，从<a href="https://www.codecogs.com/eqnedit.php?latex=d_x(P),d_y(P),d_w(P),d_h(P)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d_x(P),d_y(P),d_w(P),d_h(P)" title="d_x(P),d_y(P),d_w(P),d_h(P)" /></a>得到的是预测<a href="https://www.codecogs.com/eqnedit.php?latex=\widehat{G}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\widehat{G}" title="\widehat{G}" /></a>
 在这里我们需要通过Loss function来使得预测值（即预测的平移量+缩放量）和真实值（即真实的平移量+缩放量）的差距缩小，文章是通过最小二乘法进行目标函数优化。最终，bbox regression的好处就是提高了mAP 3%~5%
+
+**仿射变换**  
+
+参考[马同学高等数学](https://www.matongxue.com/madocs/244.html) 里的回答了解到，仿射变换（Affine Transformation）相当于：线性变换+平移。直线经过仿射变换仍然为直线，直线之间的平行线保持不必，点的位置顺序也不会变换。但坐标系的原点发生了变换。
+在图像处理中，二维图像的平移、缩放、拉伸、旋转、扭曲、收缩等操作是常见的图像几何变换。在R-CNN中作者是通过该操作来得到固定大小的input size。
+> we use a simple technique affine image warping to compute a fixed-size CNN input from each region proposal, regardless of the region's shape.  
+
+**non-maximum suppression**
+> the only class-specific computations are a reasonably small matrix-vector product and greedy non-maximum suppression.  
+
+根据[Coursera](https://zh.coursera.org/lecture/convolutional-neural-networks/non-max-suppression-dvrjH)的video，对non-maximum suppression做以下总结：  算法可能会对一个物体生成multiple detections，但是我们只保留置信度最高的预测框即maximum probability此外抑制其他低概率的预测框。
+> 1. discard all the predictions of the bounding boxes with Pc less than or equal to some threshold, assume it is 0.6  
+> 2. while there are any remaining boxes, pick the box with the largest Pc then output as a prediction.  
+> 3. discard any remaining box with IOU >=0.5 with the box output in the previous step.   
+
+从上面的流程中我们也可以知道nms需要设定两个阈值，此外因为nms一次只会去处理一个类别，如果有N个类别时，nms需要执行N次。
+
 
 ![cv](https://img-blog.csdn.net/20160816132136353)
