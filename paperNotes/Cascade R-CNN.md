@@ -50,7 +50,18 @@ proposal.
 > 2. while there are any remaining boxes, pick the box with the largest Pc then output as a prediction.  
 > 3. discard any remaining box with IOU >=0.5 with the box output in the previous step.   
 
-从上面的流程中我们也可以知道nms需要设定两个阈值，此外因为nms一次只会去处理一个类别，如果有N个类别时，nms需要执行N次。
+从上面的流程中我们也可以知道nms需要设定两个阈值，此外因为nms一次只会去处理一个类别，如果有N个类别时，nms需要执行N次。  
 
+**评价指标**  
+
+在object detection中，经常用mAP(mean Average Precision)来衡量算法的效果。
+首先我们要来区分TP(True Positive) & FP(False Positive) & TN(True Negative) & FN(False Negative)  
+
+![1](https://pic4.zhimg.com/80/v2-761706f5b1fe36873ba1bb20c7d1d447_hd.jpg)  
+
+
+
+Precison=TP/(TP+FP)，其中TP+FP为总的检测数据，Precision是候选框框出来的有多少是正确的，举个例子对pedestrian进行检测，FP指的是people detected are not really pedestrians，而TP指的是把一开始标注为Ground Truth=1的pedestrian给正确的检测出来了。  
+Recall=TP/(TP+FN)，其中TP+FN为Ground Truth=1的数据。在以Precision为纵坐标，Recall为横坐标的坐标系中，Precision会随着Recall的增加总体上呈现下降趋势。而AP衡量的是学习出的模型在单个类别上的好坏，mAP是AP取平均值，衡量的是学习出的模型在所有类别上的好坏。具体的计算方法可以从[代码片段](https://github.com/facebookresearch/Detectron/blob/05d04d3a024f0991339de45872d02f2f50669b3d/lib/datasets/voc_eval.py#L54)更好的理解。
 
 ![cv](https://img-blog.csdn.net/20160816132136353)
