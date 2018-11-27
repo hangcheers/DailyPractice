@@ -1,3 +1,6 @@
+Inception系列有四篇重要的paper，分别是：[Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842)、
+[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shif](https://arxiv.org/abs/1502.03167)、[Rethinking the Inception Architecture for Computer Vision](https://arxiv.org/abs/1512.00567)、[Inception-v4](https://arxiv.org/abs/1602.07261)
+在此，依次阅读并做笔记。
 ## GoogleNet  
 [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842) 首次提出了「**Inception**」模块作为网络构架，
 该网络构架也是后续作为classification和detection的baseline。
@@ -28,10 +31,12 @@ All we need is to find the **optimal local construction** and to repeat it spati
 
 输入有四个分支，使用多个尺度（1x1或3x3或5x5）的卷积和池化进行特征提取「相当于将稀疏矩阵分解为密集矩阵」，每一尺度提取的特征是均匀分布的，
 但是经过「filter concatenation」这步操作后，输出的特征不再是均匀分布的，相关性强的特征会被加强，而相关性弱的特征会被弱化。
-「filter concatenation」，这一步其实相当于在特征维度/沿着深度方向进行拼接，从而得到全新的网络结构。结合code来加深一下理解
+「filter concatenation」，这一步其实相当于在特征维度/沿着深度方向进行拼接，从而输出 a single output vector forming the input of 
+next stage.得到全新的网络结构。结合code来加深一下理解
 > 
     concatenated_tensor = tf.concat(3,[branch1, branch2, branch3, branch 4])  
 
-此外，Inception module 借鉴了NIN(Network In Network)，引入了1x1的卷积操作，进行了网络结构的改进。
+Inception module 借鉴了NIN(Network In Network)，引入1x1的卷积操作，进行了网络结构的改进。更具体的来说，在3x3、5x5卷积操作前
+使用1x1的卷积，起到降维的作用，显著降低了计算量。
 
 
