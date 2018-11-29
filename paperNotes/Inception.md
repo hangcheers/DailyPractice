@@ -41,8 +41,6 @@ next stage。
 > 
     concatenated_tensor = tf.concat(3,[branch1, branch2, branch3, branch 4])  
 
-现在我们来分析一下，上面的图b相比图a的优势在哪里🧐。  
-*1x1的卷积是作为瓶颈层的作用，用很小的计算量可以增加一层特征变换和非线性变换。*  
 
 **E.g:**   
 {General}：输入 28x28x192 volume ，并列经过 1x1卷积操作、3x3卷积操作、5x5卷积操作、max-pool，分别得到28x28x64、28x28x128、
@@ -54,24 +52,37 @@ Pool layer will perform a downsampling operation along **the spatial dimensions*
 FC layer will compute the class score,resulting in volume of size「1x1x#class」。
 
 {Specific}：5x5的卷积操作得到了28x28x32的block。
-filter size(or receptive field) =5x5x3，其中（5 pixels width and height, 3 = the color channels), 
-  
+filter size =5x5x192，5 pixels width and height, 192 pixels depth（filter 的深度需要和image的深度保持一致。）
+
 
 设input volume width = W,  the width of receptive field = F_w, zero padding on the border = P, stride = S
 那么output volume width = (W-F+2P)/S+1。同理也可以得到output volume height。此外, input volume depth = D1
 此外，被filter覆盖的图像区域称为receptive field，具体操作是：slide each filter across the width and height of the input volume and compute dot products between the entries of the filter and the input at any position，即filter中的值和原始图像中receptive field中的像素值进行点积运算，产生activation map或feature map。**图像一般都是局部相关的**，
-第n+1层的每个神经元和第n层的receptive field中的神经元连接，而不需要和第n层的所有神经元连接，ConvNet具有**local connectivity(局部连接)** 的性质。局部连接相比全连接可以大大减少参数的个数。  
+第n+1层的每个神经元和第n层的receptive field中的神经元连接，而不需要和第n层的所有神经元连接，ConvNet具有**local connectivity(局部连接)** 的性质。当filter的receptive field越大，filter能够处理的原始输入内容的范围就越大。随着经过更多的卷积层，得到的激活映射也就具有更为复杂的特征。  
 
 ![4](http://cs231n.github.io/assets/cnn/depthcol.jpeg)
 
-设 number of filters = K, 也是output volume depth的值。
+设 number of filters = K, 也是output volume depth的值。当filter的数目越多，spatial dimensions就会保留的越好。
 CNN具有local connection和parameter sharing的特点。
 每个filter的权重的个数 = F_w x F_h x D1, 总的权重个数= F_w x F_h x D1 x K
 
 我们再分析一下**compution cost**
 > cs231n 指出： the largest bottleneck to be aware of when constructing the ConvNet is the memory bottle neck.
 we need to keep track of the intermediate volume size, the paramter size and the memory.
-[Reference:cs231n](http://cs231n.github.io/convolutional-networks/#conv)
+[Reference:cs231n](http://cs231n.github.io/convolutional-networks/#conv)  
+
+现在我们来分析一下，上面的图b相比图a的优势在哪里🧐。  
+*1x1的卷积是作为瓶颈层的作用，用很小的计算量可以增加一层特征变换和非线性变换。*    
+> the bottleneck is usually the smallest part of something
+我们来计算一下图a中5x5的卷积操作得到了28x28x32的block的时候，所需要的multiples的次数。以及图b中先使用1x1的卷积操作先得到28x28x16，再使用5x5的卷积操作得到了28x28x32的blcok的时候，所需要的multiples的次数。  
+
+
+1.图a (28x28x32) x (5x5x192) = 120million 「一个output volume所需要的乘积次数 x the number of output values」 
+
+2.图b （28x28x16) x (1x1x192) + (28x28x32) x (5x5x16) = 12.4 million  
+
+从上面👆两个对比可以知道1x1的卷积操作大大的减少了计算量。
+
 
 ### GoogleNet's architecture
 首先，为了有一个初步的印象，先截取了GoogleNet的一部分，
