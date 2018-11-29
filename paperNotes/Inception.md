@@ -33,14 +33,42 @@ All we need is to find the **optimal local construction** and to repeat it spati
 
 输入有四个分支，使用多个尺度（1x1或3x3或5x5）的卷积和池化进行特征提取「相当于将稀疏矩阵分解为密集矩阵」，每一尺度提取的特征是均匀分布的，
 但是经过「filter concatenation」这步操作后，输出的特征不再是均匀分布的，**相关性强的特征会被加强，而相关性弱的特征会被弱化**。*这个相关性高的节点应该被连接在一起的结论，即是从神经网络的角度对Hebbian原理有效性的证明*
-「filter concatenation」，这一步其实相当于沿着深度方向（或者说在depth这个维度）进行拼接，输出 a single output vector forming the input of 
-next stage。结合[Udacity视频](https://becominghuman.ai/understanding-and-coding-inception-module-in-keras-eb56e9056b4b)和code来加深一下对「filter concatenation」的理解
+「filter concatenation」，这一步其实相当于沿着深度方向（或者说在depth这个维度）进行拼接，
+> stack up the first volume to the second volume to make the dimensions match up …… Output a single output vector forming the input of 
+next stage。  
+
+结合[Udacity视频](https://becominghuman.ai/understanding-and-coding-inception-module-in-keras-eb56e9056b4b)和code来加深一下对「filter concatenation」的理解
 > 
     concatenated_tensor = tf.concat(3,[branch1, branch2, branch3, branch 4])  
 
 现在我们来分析一下，上面的图b相比图a的优势在哪里🧐。  
-1x1卷积的「性价比」很高，用很小的计算量可以增加一层特征变换和非线性变换。
-它的计算量小表现在？
+*1x1的卷积是作为瓶颈层的作用，用很小的计算量可以增加一层特征变换和非线性变换。*  
+
+**E.g:**   
+{General}：输入 28x28x192 volume ，并列经过 1x1卷积操作、3x3卷积操作、5x5卷积操作、max-pool，分别得到28x28x64、28x28x128、
+28x28x32、28x28x32 volume, 将并列的volume沿着深度方向进行拼接，输出 28x28x256 volume。 
+> Feifei-Li的cs231n的课件里是描述CNN的：every layer of a ConvNet transforms one volume of activations to another through a differentiable function.We use three main types of layers to build ConvNet architectures:Convolutional Layer, Pooling Layer,
+and Fully-Connected Layer.  Conv layer will compute **the output of neurons** that are connected to local regions in the input,
+each computing a **dot product between their weights** and a small region they are connected to the input volume.
+Pool layer will perform a downsampling operation along **the spatial dimensions**(*width,height*)
+FC layer will compute the class score,resulting in volume of size「1x1x#class」。
+
+{Specific}：5x5的卷积操作得到了28x28x32的block。
+filter size(or receptive field) =5x5x3，其中（5 pixels width and height, 3 = the color channels), 
+  
+
+设input volume width = W,  the width of receptive field = F_w, zero padding on the border = P, stride = S
+那么output volume width = (W-F+2P)/S+1。同理也可以得到output volume height。此外, input volume depth = D1
+此外，recptive field也可以成为filter，它的作用是：slide each filter across the width and height of the input volume and compute dot products between the entries of the filter and the input at any position.
+设 number of filters = K, 也是output volume depth的值。
+CNN具有local connection和parameter sharing的特点。
+每个filter的权重的个数 = F_w x F_h x D1, 总的权重个数= F_w x F_h x D1 x K
+
+我们再分析一下**compution cost**
+> cs231n 指出： the largest bottleneck to be aware of when constructing the ConvNet is the memory bottle neck.
+we need to keep track of the intermediate volume size, the paramter size and the memory.
+
+
 ### GoogleNet's architecture
 首先，为了有一个初步的印象，先截取了GoogleNet的一部分，
 ![2](https://mohitjainweb.files.wordpress.com/2018/06/googlenet-architecture-showing-the-side-connection.png?w=700)  
