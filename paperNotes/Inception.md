@@ -52,7 +52,7 @@ Pool layer will perform a downsampling operation along **the spatial dimensions*
 FC layer will compute the class score,resulting in volume of size「1x1x#class」。
 
 {Specific}：5x5的卷积操作得到了28x28x32的block。
-filter size =5x5x192，5 pixels width and height, 192 pixels depth（filter 的深度需要和image的深度保持一致。）
+filter size =5x5x192，5 pixels width and height, 192 pixels depth（filter的深度需要和*前一feature map的深度*保持一致。）
 
 
 设input volume width = W,  the width of receptive field = F_w, zero padding on the border = P, stride = S
@@ -72,7 +72,8 @@ we need to keep track of the intermediate volume size, the paramter size and the
 [Reference:cs231n](http://cs231n.github.io/convolutional-networks/#conv)  
 
 现在我们来分析一下，上面的图b相比图a的优势在哪里🧐。  
-*1x1的卷积是作为瓶颈层的作用，用很小的计算量可以增加一层特征变换和非线性变换。*    
+1x1的卷积是作为瓶颈层的作用，用很小的计算量可以增加一层特征变换和非线性变换。*此外，一般涉及到改变通道数，都会使用1x1卷积操作，
+例如残差连接和Dense连接*  
 > the bottleneck is usually the smallest part of something
 我们来计算一下图a中5x5的卷积操作得到了28x28x32的block的时候，所需要的multiples的次数。以及图b中先使用1x1的卷积操作先得到28x28x16，再使用5x5的卷积操作得到了28x28x32的blcok的时候，所需要的multiples的次数。  
 
