@@ -4,16 +4,18 @@
 在训练的过程中，输入的概率分布不固定，网络的参数在不断的变化，神经网络的隐含层也要不断的去「适应」新的分布。
 这个现象会让模型更加难训练，我们也需要更加谨慎的初始化模型参数和学习率。因此作者引入了*Normalization* 来解决这个问题。 
 
-BN的基本思想就是：让每个隐层节点的激活输入分布固定下来，通过规范化的手段，将每层神经网络任意
-神经元这个输入值的分布“强行拉回”到均值为0，方差为1的分布中。需要「固定」参数的原因，在paper里是这么交代的。
+### Normalization
+通过规范化的手段，将每层神经网络任意神经元这个输入值的分布“强行拉回”到均值为0，方差为1的分布中.常规的正则化公式为：<a href="https://www.codecogs.com/eqnedit.php?latex=$$\hat{x}^{k}=\frac{x^{k}-E(x^{k})}{\sqrt{var(x^{k})}}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\hat{x}^{k}=\frac{x^{k}-E(x^{k})}{\sqrt{var(x^{k})}}$$" title="$$\hat{x}^{k}=\frac{x^{k}-E(x^{k})}{\sqrt{var(x^{k})}}$$" /></a>
+这么做的优点是可以加快收敛的速度，但是缺点是假如该层的各个特征互不相关，简单的正则化操作可能会改变该层的特征表达。
+为了确保神经网络里面可以进行恒等变换(identity transform)，我们需要对常规的正则化公式进行改变。由此我们也引入了Batch Normalization:<a href="https://www.codecogs.com/eqnedit.php?latex=$$\mathrm{BN_{\gamma&space;,\beta&space;}}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\mathrm{BN_{\gamma&space;,\beta&space;}}$$" title="$$\mathrm{BN_{\gamma ,\beta }}$$" /></a> 。  <a href="https://www.codecogs.com/eqnedit.php?latex=$$y^{k}=\gamma^{k}\hat{x^{k}}&plus;\beta^{k}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$y^{k}=\gamma^{k}\hat{x^{k}}&plus;\beta^{k}$$" title="$$y^{k}=\gamma^{k}\hat{x^{k}}+\beta^{k}$$" /></a>
+其中每一个activation都会引入两个超参数<a href="https://www.codecogs.com/eqnedit.php?latex=$$\mathbf{\gamma&space;,\beta}&space;$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\mathbf{\gamma&space;,\beta}&space;$$" title="$$\mathbf{\gamma ,\beta} $$" /></a> 。这两个参数也是神经网络需要学习的参数，分别起到的是scale和shift的作用。相当于在原来正则化的基础上，再进行了一次线性变化。在mini-batch的训练过程中，BN是规范化了每一层的输入，z=g(BN(W,u))  「g表示的非线性操作，例如：relu」，从而减少了Internal Covariate shift的干扰。
 > the inputs to each layer are affected by the parameters of all preceding layers - so that small
 changes to the network parameters amplify as the network becomes deeper …… Fixed distribution of inputs to a 
-sub-network would have a positive consequences for the layers outside the network, as well.
-### Normalization
-常规的正则化公式为：\hat{x}^{(k)}=(x^{k}-E[x^{k}])/ \sqrt{var(x^{k})}
+sub-network would have a positive consequences for the layers outside the network, as well.  此外，BN的创新也在于
+applied to the sub-networks and layers, incorporate the normalization in the network architecture as well。  
 
-经过BN后，大部分的activation的值就会落入非线性函数的「线性区域」即「导数非饱和区域」，
-这样就可以避免进入梯度饱和区域(即*梯度变化较小的区域*)，这样的话，训练时就可以加快收敛速度。
+Batch Normalization不仅允许不那么谨慎的初始化，还允许使用更高的learning rate。
+
 
 ## Rethinking the Inception Architecture for Computer vision
 因为计算开销、参数量限制了把Inception部署到移动端和一些场景中，在abstract里，作者指出了对网络构架进行改进的思路。
