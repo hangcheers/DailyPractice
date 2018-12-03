@@ -10,7 +10,7 @@ BN的基本思想就是：让每个隐层节点的激活输入分布固定下来
 changes to the network parameters amplify as the network becomes deeper …… Fixed distribution of inputs to a 
 sub-network would have a positive consequences for the layers outside the network, as well.
 ### Normalization
-常规的正则化公式为：\mathbf{\hat{x}^{(k)} }=\mathbf{(x^{k}-E[x^{k}])/ \sqrt{var(x^{k})}} 
+常规的正则化公式为：\hat{x}^{(k)}=(x^{k}-E[x^{k}])/ \sqrt{var(x^{k})}
 
 经过BN后，大部分的activation的值就会落入非线性函数的「线性区域」即「导数非饱和区域」，
 这样就可以避免进入梯度饱和区域(即*梯度变化较小的区域*)，这样的话，训练时就可以加快收敛速度。
