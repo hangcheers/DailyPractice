@@ -9,6 +9,8 @@ BN的基本思想就是：让每个隐层节点的激活输入分布固定下来
 > the inputs to each layer are affected by the parameters of all preceding layers - so that small
 changes to the network parameters amplify as the network becomes deeper …… Fixed distribution of inputs to a 
 sub-network would have a positive consequences for the layers outside the network, as well.
+### Normalization
+常规的正则化公式为：\mathbf{\hat{x}^{(k)} }=\mathbf{(x^{k}-E[x^{k}])/ \sqrt{var(x^{k})}} 
 
 经过BN后，大部分的activation的值就会落入非线性函数的「线性区域」即「导数非饱和区域」，
 这样就可以避免进入梯度饱和区域(即*梯度变化较小的区域*)，这样的话，训练时就可以加快收敛速度。
@@ -45,4 +47,5 @@ extreme predictions.
 假设x为training example，p(k|x)为x属于「label k」的概率，q(k|x)为x属于「ground-truth label」的概率。为了方便起见，忽略了p和q在example x上的相关性。
 
 目标函数：「最小化交叉熵」。因为交叉熵衡量的是两个分布（p和q）的相似性，最小化目标函数是为了让预测的label概率分布p(k|x)（即例如上面的softmax的输出）和ground-truth label的概率分布q(k|x)尽可能的接近。「最小化交叉熵」也等价为「最大化似然函数」。但是我们需要对这个目标函数进行了改进。因为在单类情况下，单一的交叉熵导致样本属于某个类别的概率非常大，模型太过与自信自己的判断。这样会导致过拟合，此外还会降低模型的适应能力。为了避免模型过于自信，引入了一个独立于样本分布的变量u(k)，这相当于在ground-truth distribution中加入了噪声，组成一个新的分布。在实验中，使用的是均匀分布(uniform distribution)代替了u(k)
-> we propose a mechanism for encouraging the model to be less confident. While this may not be desired if the goal is to maximize the log-likelihood of training labels, it does regularize the model and makes it more adaptable.
+> we propose a mechanism for encouraging the model to be less confident. While this may not be desired if the goal is to maximize the log-likelihood of training labels, it does regularize the model and makes it more adaptable …… we refer to this
+change in ground-truth label distribution as label-smoothing regularization, or LSR.
