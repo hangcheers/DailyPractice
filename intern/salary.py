@@ -1,9 +1,9 @@
 import pandas as pd
-
 from pyecharts import Bar, Line, Overlap
 
 """
-对salary中对数据进行清洗和初步分析
+对salary中对数据进行清洗和初步分析,
+主要从区域(即town)的角度进行男性、女性工资差异的定量分析
 绘制salary的图
 """
 
@@ -144,7 +144,5 @@ overlap.render()
 y = [47.94, 25.72, 15.68, 29.96]
 bar5 = Bar("salary difference in various works")
 bar5.add("types of works", attr, y, mark_line=["average"], is_label_show=True, xaxis_rotate=20,
-         yaxis_name='Net Salary Per Hour', yaxis_margin=2,bar_category_gap="60%")
+         yaxis_name='Net Salary Per Hour', yaxis_margin=2, bar_category_gap="60%")
 bar5.render()
-
-# 然后从年龄段开始考虑
