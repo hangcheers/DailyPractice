@@ -56,7 +56,15 @@ mean_worker = high_salary3["mean_worker"].values.tolist()
 # 所有town在一起得到的不同岗位的平均工资
 attr = ["mean_exective", "mean_middle_manager", "mean_employee", "mean_worker"]
 mean_salary = high_salary[attr].mean().tolist()
-print(mean_salary)
+# print(mean_salary)
+mean_salary = [47.94, 25.72, 15.68, 29.96]
+attr_m = ["m_exective", "m_middle_manager", "m_employee", "m_worker"]
+mean_salary1 = high_salary[attr_m].mean().tolist()
+attr_f = ["f_exective", "f_middle_manager", "f_employee", "f_worker"]
+mean_salary2 = high_salary[attr_f].mean().tolist()
+# print(mean_salary2)
+mean_salary2 = [32.26, 17.64, 14.54, 18.34]
+
 # 不同工种的男性和女性的工资差异用柱状图表示出来
 # bar 1 表示executive职位的男女差别
 attr1 = high_salary_town
@@ -141,8 +149,19 @@ overlap.add(line4, yaxis_index=1, is_add_yaxis=True)
 overlap.render()
 
 # mean salary
-y = [47.94, 25.72, 15.68, 29.96]
-bar5 = Bar("salary difference in various works")
-bar5.add("types of works", attr, y, mark_line=["average"], is_label_show=True, xaxis_rotate=20,
+
+
+# bar 5 表示男女在不同职位的平均工资的差别
+bar5 = Bar("salaries per category and sex")
+bar5.add("male", attr, mean_salary1, mark_line=["average"], is_label_show=True, xaxis_rotate=20,
          yaxis_name='Net Salary Per Hour', yaxis_margin=2, bar_category_gap="60%")
-bar5.render()
+bar5.add("female", attr, mean_salary2, mark_line=["average"], is_label_show=True, bar_category_gap='25%',
+         xaxis_rotate=20, yaxis_name='Net Salary Per Hour ', yaxis_margin=2)
+
+# line 5 表示人们在不同职位的平均工资的差异
+line5 = Line("mean salary")
+line5.add("mean_middle_manager", attr, mean_salary, is_stack=True, is_label_show=True)
+overlap = Overlap(width=1200, height=600)
+overlap.add(bar5)
+overlap.add(line5, yaxis_index=1, is_add_yaxis=True)
+overlap.render()
