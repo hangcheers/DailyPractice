@@ -30,8 +30,11 @@ gender_salary = gender_salary.rename(
 high_salary = gender_salary.sort_values(by=["m_exective"], ascending=False).head(5)
 # print(high_salary)
 high_salary1 = gender_salary.sort_values(by=["m_middle_manager"], ascending=False).head(5)
+# print(high_salary1)
 high_salary2 = gender_salary.sort_values(by=["m_employee"], ascending=False).head(5)
+# print(high_salary2)
 high_salary3 = gender_salary.sort_values(by=["m_worker"], ascending=False).head(5)
+# print(high_salary3)
 # 高工资城市名称
 high_salary_town = high_salary["Town_name"].values.tolist()
 high_salary_town1 = high_salary1["Town_name"].values.tolist()
@@ -68,7 +71,6 @@ mean_salary2 = [32.26, 17.64, 14.54, 18.34]
 # 不同工种的男性和女性的工资差异用柱状图表示出来
 # bar 1 表示executive职位的男女差别
 attr1 = high_salary_town
-
 y_male1 = high_salary_m_exective
 y_female1 = high_salary_f_exective
 y_mean1 = mean_exective
@@ -152,15 +154,16 @@ overlap.render()
 
 
 # bar 5 表示男女在不同职位的平均工资的差别
-bar5 = Bar("salaries per category and sex")
-bar5.add("male", attr, mean_salary1, mark_line=["average"], is_label_show=True, xaxis_rotate=20,
+attr5 = ["exective","middle_manager","employee","worker"]
+bar5 = Bar("Average Mean Net Salary per Category and Sex")
+bar5.add("male", attr5, mean_salary1, mark_line=["average"], is_label_show=True,
          yaxis_name='Net Salary Per Hour', yaxis_margin=2, bar_category_gap="60%")
-bar5.add("female", attr, mean_salary2, mark_line=["average"], is_label_show=True, bar_category_gap='25%',
-         xaxis_rotate=20, yaxis_name='Net Salary Per Hour ', yaxis_margin=2)
+bar5.add("female", attr5, mean_salary2, mark_line=["average"], is_label_show=True, bar_category_gap='25%',
+          yaxis_name='Net Salary Per Hour ', yaxis_margin=2)
 
 # line 5 表示人们在不同职位的平均工资的差异
 line5 = Line("mean salary")
-line5.add("mean_middle_manager", attr, mean_salary, is_stack=True, is_label_show=True)
+line5.add("mean_middle_manager", attr5, mean_salary, is_stack=True, is_label_show=True)
 overlap = Overlap(width=1200, height=600)
 overlap.add(bar5)
 overlap.add(line5, yaxis_index=1, is_add_yaxis=True)
