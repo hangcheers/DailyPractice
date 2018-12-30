@@ -41,15 +41,15 @@ mean_salary = age_salary[columns3].mean().tolist()
 y3_mean = [9.55, 13.50, 15.88]
 
 # bar 1 表示男性、女性在三个年龄段的工资差异
-bar1 = Bar(" wage difference  ")
+bar1 = Bar(" Salaries Growth with Age  ")
 bar1.add("male", attr, y1_male, mark_line=["average"], is_label_show=True, bar_category_gap='45%',
-         yaxis_name='Net Salary Per Hour', yaxis_margin=2)
+         yaxis_name='Net Salary Per Hour', yaxis_margin=2,legend_pos='right')
 bar1.add("female", attr, y2_female, mark_line=["average"], is_label_show=True, bar_category_gap='45%',
-         yaxis_name='Net Salary Per Hour', yaxis_margin=2)
+         yaxis_name='Net Salary Per Hour', yaxis_margin=2,legend_pos='right')
 
 # line 1 表示在三个年龄段的平均工资差异
-line1 = Line("mean salary")
-line1.add("mean_middle_manager", attr, y3_mean, is_stack=True, is_label_show=True)
+line1 = Line("Salaries growth with age")
+line1.add("mean_salary", attr, y3_mean, is_stack=True, is_label_show=True,legend_pos='right')
 overlap = Overlap(width=800, height=400)
 overlap.add(bar1)
 overlap.add(line1, yaxis_index=1, is_add_yaxis=True)
